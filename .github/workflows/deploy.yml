@@ -1,0 +1,58 @@
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 代码检查
+        run: npm run lint --if-present
+
+      - name: 构建项目
+        run: npm run build
+
+      - name: 安装 Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: 拉取 Vercel 环境信息
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 构建项目资源
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: 部署到 Vercel
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> $GITHUB_OUTPUT
+
+      - name: 输出部署信息
+        run: |
+          echo "✅ 部署成功！"
+          echo "🌐 部署地址: ${{ steps.deploy.outputs.url }}"
