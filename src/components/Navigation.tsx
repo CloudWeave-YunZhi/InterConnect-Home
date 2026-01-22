@@ -25,7 +25,7 @@ export const Navigation: React.FC = () => {
             <a href="#docs" className="text-apple-body text-muted-foreground hover:text-foreground transition-colors duration-200">
               文档
             </a>
-            <a href="https://github.com" className="text-apple-body text-muted-foreground hover:text-foreground transition-colors duration-200">
+            <a href="https://github.com/CloudWeave-YunZhi" className="text-apple-body text-muted-foreground hover:text-foreground transition-colors duration-200">
               GitHub
             </a>
           </div>
